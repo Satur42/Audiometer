@@ -5,6 +5,9 @@ import argparse
 class AudioPlayer:
 
     def __init__(self):
+        """An audio player that can play sine beeps at various frequencies, volumes and with various durations.
+        Automatically detects current samplerate of selected sound device.
+        """
         self.fs = self.get_device_samplerate()
         self.beep_duration = 10
         self.volume = 0.5
@@ -13,6 +16,11 @@ class AudioPlayer:
         self.is_playing = False
 
     def generate_tone(self):
+        """generates a sine tone with current audio player settings
+
+        Returns:
+            np.array: sine wave as numpy array
+        """
         t = np.linspace(start=0, 
                         stop=self.beep_duration, 
                         num=int(self.fs * self.beep_duration), 
@@ -21,6 +29,13 @@ class AudioPlayer:
         return tone
 
     def play_beep(self, frequency, volume, duration):
+        """Sets the frequency, volume and beep duration of the audio player and then plays a beep with those parameters
+
+        Args:
+            frequency (int): f in Hz
+            volume (float): volume multiplier (between 0 and 1)
+            duration (int): duration of beep in seconds
+        """
         self.frequency = frequency
         self.volume = volume
         self.beep_duration = duration
