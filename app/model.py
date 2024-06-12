@@ -38,8 +38,6 @@ class Procedure():
         if key == keyboard.Key.space:
             self.tone_heard = True
             print("Tone heard!")
-        
-        
 
 
     def play_tone(self):
@@ -69,7 +67,6 @@ class Familiarization(Procedure):
 
         super().__init__(startlevel, signal_length)      
         self.fails = 0 # number of times familiarization failed
-
 
 
     def familiarize(self): # TODO Return last level and successfull or unsuccessful
@@ -111,6 +108,30 @@ class Familiarization(Procedure):
                 print("Familiarization successful!")
                 return None
 
+
+
+
+class StandardProcedure(Procedure):
+    
+    def __init__(self, startlevel=40, signal_length=1):
+        """Dummy StandardProcedure class
+        """
+        # Dummy Results
+        # 125, 250, 500, 1000, 2000, 4000, 8000 #Hz
+        left = np.array([5, 10, 5, 10, 20, 25, 40]) #dBHL
+        right = np.array([10, 10, 10, 15, 20, 25, 50])
+        self.results = {"right": right, 
+                      "left": left}
+
+    def standard_test(self):
+        """Dummy StandardProcedure function
+
+        Returns:
+            dict: dummy results of the test"""
+        print("Dummy Hearing Test started")
+        time.sleep(2)
+        print("Dummy Hearing Test done")
+        return self.results
 
 
 
