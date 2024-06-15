@@ -80,4 +80,4 @@ class AudioPlayer:
             help='amplitude (default: %(default)s)')
         args = parser.parse_args(remaining)
         return sd.query_devices(args.device, 'output')['default_samplerate']
-    
+        

@@ -1,5 +1,5 @@
 from .audio_player import AudioPlayer
-
+import numpy as np
 from pynput import keyboard
 import time
 
