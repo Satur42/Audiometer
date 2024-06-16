@@ -4,19 +4,17 @@ import sounddevice as sd
 import threading
 from pynput import keyboard
 import time
-
+import argparse
 
 class AudioPlayer:
-
     def __init__(self):
         """An audio player that can play sine beeps at various frequencies, volumes and with various durations.
         Automatically detects current samplerate of selected sound device.
         """
         self.fs = self.get_device_samplerate()
-        self.beep_duration = 10
+        self.beep_duration = 100 
         self.volume = 0.5
         self.frequency = 440
-        self.stream = None
         self.is_playing = False
 
     def generate_tone(self):
@@ -49,11 +47,10 @@ class AudioPlayer:
         sd.wait()
         self.is_playing = False
 
-    def stop(self):
+    def stop(self):   
         """Stops the currently playing beep."""
         sd.stop()
         self.is_playing = False
-
 
     def int_or_str(self, text):
         """Helper function for argument parsing."""
@@ -62,9 +59,8 @@ class AudioPlayer:
         except ValueError:
             return text
 
-
     def get_device_samplerate(self):
-        """gets current samplerate from the selected audio output device
+        """Gets current samplerate from the selected audio output device
 
         Returns:
             float: samplerate of current sound device
@@ -92,9 +88,8 @@ class AudioPlayer:
             help='amplitude (default: %(default)s)')
         args = parser.parse_args(remaining)
         return sd.query_devices(args.device, 'output')['default_samplerate']
-    
-class Procedure():
 
+class Procedure:
     def __init__(self, startlevel, signal_length):
         """The parent class for the familiarization, the main procedure and the short version
 
@@ -107,7 +102,7 @@ class Procedure():
         self.level = startlevel
         self.signal_length = signal_length
         self.frequency = 1000
-        self.zero_dbhl = 0.00002 # zero_dbhl in absolute numbers. Needs to be calibrated!
+        self.zero_dbhl = 0.00002  # zero_dbhl in absolute numbers. Needs to be calibrated!
         self.tone_heard = False
 
     def dbhl_to_volume(self, dbhl):
@@ -134,7 +129,7 @@ class Procedure():
         self.tone_heard = False
         beep_thread = threading.Thread(target=self.ap.play_beep, args=(self.frequency, self.dbhl_to_volume(self.level), self.signal_length))
         listener_thread = threading.Thread(target=self.listen_for_keypress)
-        
+
         beep_thread.start()
         listener_thread.start()
 
@@ -148,11 +143,7 @@ class Procedure():
         with keyboard.Listener(on_press=self.key_press) as listener:
             listener.join()
 
-
-
-
 class Familiarization(Procedure):
-
     def __init__(self, startlevel=40, signal_length=1):
         """Familiarization process
 
@@ -160,14 +151,12 @@ class Familiarization(Procedure):
             startlevel (int, optional): starting level of procedure in dBHL. Defaults to 40.
             signal_length (int, optional): length of played signals in seconds. Defaults to 1.
         """
-        super().__init__(startlevel, signal_length)      
-        self.fails = 0 # number of times familiarization failed
+        super().__init__(startlevel, signal_length)
+        self.fails = 0  # number of times familiarization failed
 
     def familiarize(self):
         """Main function"""
-
         while True:
-
             self.tone_heard = True
 
             # First loop (always -20dBHL)
@@ -198,32 +187,28 @@ class Familiarization(Procedure):
                 print("Familiarization successful!")
                 return None
 
-
-
-
 class StandardProcedure(Procedure):
-    
     def __init__(self, startlevel=40, signal_length=1):
-        """Dummy StandardProcedure class
-        """
+        """Dummy StandardProcedure class"""
+        super().__init__(startlevel, signal_length)
         # Dummy Results
-        # 125, 250, 500, 1000, 2000, 4000, 8000 #Hz
-        left = np.array([5, 10, 5, 10, 20, 25, 40]) #dBHL
+        # 125, 250, 500, 1000, 2000, 4000, 8000 Hz
+        left = np.array([5, 10, 5, 10, 20, 25, 40])  # dBHL
         right = np.array([10, 10, 10, 15, 20, 25, 50])
-        self.results = {"right": right, 
-                      "left": left}
+        self.results = {"right": right, "left": left}
 
     def standard_test(self):
         """Dummy StandardProcedure function
 
         Returns:
-            dict: dummy results of the test"""
+            dict: dummy results of the test
+        """
         print("Dummy Hearing Test started")
         time.sleep(2)
         print("Dummy Hearing Test done")
         return self.results
 
-
-
+# Example usage
 familiarization = Familiarization()
+
 familiarization.familiarize()
