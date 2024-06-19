@@ -27,6 +27,7 @@ class AudioPlayer:
                         endpoint=False)
         tone = np.sin(2 * np.pi * self.frequency * t) * self.volume
         return tone
+    
 
 
     def play_beep(self, frequency, volume, duration):

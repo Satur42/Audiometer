@@ -120,7 +120,13 @@ class Procedure:
         if key == keyboard.Key.space:
             self.tone_heard = True
             self.ap.stop()
+            print("Tone heard!")
             return False
+
+        
+    def listen_for_keypress(self):
+        with keyboard.Listener(on_press=self.key_press) as listener:
+            listener.join()
 
     def play_tone(self):
         """Set tone_heard to False, play beep, then wait for keypress.
@@ -129,19 +135,16 @@ class Procedure:
         self.tone_heard = False
         beep_thread = threading.Thread(target=self.ap.play_beep, args=(self.frequency, self.dbhl_to_volume(self.level), self.signal_length))
         listener_thread = threading.Thread(target=self.listen_for_keypress)
-
+ 
         beep_thread.start()
         listener_thread.start()
-
+ 
         beep_thread.join()
-        listener_thread.join()
 
         if not self.tone_heard:
             print("Tone not heard :(")
+        
 
-    def listen_for_keypress(self):
-        with keyboard.Listener(on_press=self.key_press) as listener:
-            listener.join()
 
 class Familiarization(Procedure):
     def __init__(self, startlevel=40, signal_length=1):
@@ -208,7 +211,11 @@ class StandardProcedure(Procedure):
         print("Dummy Hearing Test done")
         return self.results
 
-# Example usage
-familiarization = Familiarization()
+P = Procedure(40, 4)
 
-familiarization.familiarize()
+P.play_tone()
+print("nächster")
+
+P.play_tone()
+print("Tone")
+       

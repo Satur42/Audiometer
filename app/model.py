@@ -37,6 +37,7 @@ class Procedure():
     def key_press(self, key):
         if key == keyboard.Key.space:
             self.tone_heard = True
+            self.ap.stop()
             print("Tone heard!")
 
 
