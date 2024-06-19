@@ -2,6 +2,7 @@ from .audio_player import AudioPlayer
 
 from pynput import keyboard
 import time
+import numpy as np
 import random
 
 
@@ -63,9 +64,8 @@ class Procedure():
         self.ap.stop()
         if self.tone_heard == False:
             print("Tone not heard :(")
-        sleep_time = random.gauss(2, 1.2)
-        while sleep_time < 0: # make sure number is not negative
-            sleep_time = random.gauss(2, 1.2)    
+        sleep_time = np.abs(random.gauss(2, 1.2))
+
         time.sleep(sleep_time) # wait before next tone is played. #TODO test times
 
 
