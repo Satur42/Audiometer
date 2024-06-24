@@ -50,7 +50,7 @@ class Procedure():
         If key is pressed, set tone_heard to True.
         """
         self.tone_heard = False
-        print("playing tone..")
+        #   print("playing tone..")
         self.ap.play_beep(self.frequency, self.dbhl_to_volume(self.level), self.signal_length)
         listener = keyboard.Listener(on_press=self.key_press, on_release=None)
         listener.start()
@@ -61,7 +61,7 @@ class Procedure():
             time.sleep(step_size / 1000)
             current_wait_time += step_size
         listener.stop()
-        print("listener stopped.")
+        #print("listener stopped.")
         self.ap.stop()
         if self.tone_heard == False:
             print("Tone not heard :(")
@@ -134,80 +134,70 @@ class Test(Procedure):
         self.frequencies = [1000, 2000, 4000, 8000, 500, 250, 125]
         self.current_frequency_index = 0
         self.run_count = 0
-        self.hearing_thresholds = {freq: None for freq in self.frequencies}
+        self.hearing_thresholds = {freq: None for freq in self.frequencies}                
     
 
     def run_test(self, freq):
-
-        #TODO: Noch nicht so ganz richtig!! nicht kopieren :D
-
         self.frequency = freq
-        # current level
         self.level = self.startlevel
-
-        # dictionary to store levels
         self.levels = {}
         self.run_count = 0
+        stop_outer_loop = False
 
-        while True:
+        while not stop_outer_loop:
             self.tone_heard = True
-            self.run_count = 0
+            self.run_count += 1
+            print(f"Run {self.run_count} for frequency {freq}.")
 
             while self.tone_heard:
                 if self.level not in self.levels:
                     self.levels[self.level] = 0
 
-                # Abspielen Prüfton
+                print(f"playing tone at {self.level} dBHL.")
                 self.play_tone()
 
-                # Antwort?
-                if self.tone_heard:   
-                    self.levels[self.level] += 1        
-                    self.level -= 10      
-                else:                                     
+                if self.tone_heard:
+                    self.levels[self.level] += 1
+                    print(f"Tone heard for the {self.levels[self.level]} time(s)." )     
+                    self.level -= 10
+                else:
                     self.level += 5
 
             while not self.tone_heard:
-                if self.level not   in self.levels:
+                if self.level not in self.levels:
                     self.levels[self.level] = 0
 
-                # Abspielen Prüfton       
+                print(f"playing tone at {self.level} dBHL.")           
                 self.play_tone()
 
-                # Antwort?
                 if not self.tone_heard:
                     self.level += 5
 
-                # 3x gleicher Pegel bei maximal 5 Durchgängen?
-                elif self.levels[self.level] >= 3 and self.run_count < 5:
-                    # Abspeichern des Schwellenwertes -> nächste Frequenz
+                elif self.levels[self.level] >= 2 and self.run_count < 5:
+                    print("3x gleicher Pegel bei maximal fünf Durchgängen!  ")
                     self.hearing_thresholds[freq] = self.level
+                    stop_outer_loop = True
                     break
 
-                # weniger als 5 Durchgänge?
                 elif self.run_count >= 5:
-                    self.levels[self.level] += 1 #?? 
-                    self.level += 10
+                    self.level s[self.level] += 1
+                    print(f"Tone heard for the {self.levels[self.level]} time(s)." )
+
                 else:
                     self.levels[self.level] += 1
+                    print(f"Tone heard for the {self.levels[self.level]} time(s)." )  
+                    self.level += 10
+                    self.run_count = 0
+            if stop_outer_loop:
+                break
 
 
- 
-    def run_all_tests(self): # TODO for left and right
+    def run_all_tests(self):
         for freq in self.frequencies:
             self.run_test(freq)
         print(self.hearing_thresholds)
-        return self.hearing_thresholds
+        return self.hearing_thresholds  
 
-
-# self.response_count += 1
-                # if self.response_count >= 3:
-                #     print("3x gleicher Pegel bei maximal fünf Durchgängen!")
-                #     self.hearing_thresholds[freq] = self.level
-                #     break
-
-
-#   
 
 test = Test()
 test.run_test(1000)
