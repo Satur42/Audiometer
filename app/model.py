@@ -1,4 +1,5 @@
-from .audio_player import AudioPlayer
+#from .audio_player import AudioPlayer
+from audio_player import AudioPlayer
 
 from pynput import keyboard
 import time
@@ -125,5 +126,55 @@ class Familiarization(Procedure):
                 return None
 
 
+class Test(Procedure):
+
+    def __init__(self, startlevel=40, signal_length=1):
+
+        super().__init__(startlevel, signal_length)
+        self.frequencies = [1000, 2000, 4000, 8000, 500, 250, 125]
+        self.current_frequency_index = 0
+        self.run_count = 0
+        self.hearing_thresholds = {freq: None for freq in self.frequencies}
+    
+
+    def run_test(self, freq):
+
+        #TODO: Noch nicht so ganz richtig!! nicht kopieren :D
+
+        self.frequency = freq
+        self.level = self.startlevel
+        self.response_count = 0
+        self.run_count = 0
+
+        while self.response_count < 3 and self.run_count < 5:
+            self.play_tone()
+
+            if self.tone_heard:
+                self.response_count += 1
+                if self.response_count >= 3:
+                    self.hearing_thresholds[freq] = self.level
+                    break
+                self.level -= 10
+            else:
+                self.run_count += 1
+                if self.run_count >= 5:
+                    self.level += 5
+
+        if self.hearing_thresholds[freq] is None:
+            self.hearing_thresholds[freq] = self.level
+
+
+    def run_all_tests(self): # TODO for left and right
+        for freq in self.frequencies:
+            self.run_test(freq)
+        print(self.hearing_thresholds)
+        return self.hearing_thresholds
+
+
+
+
+
+fam = Familiarization()
+fam.familiarize()
 
 
