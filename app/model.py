@@ -142,56 +142,57 @@ class Test(Procedure):
         #TODO: Noch nicht so ganz richtig!! nicht kopieren :D
 
         self.frequency = freq
+        # current level
         self.level = self.startlevel
+
+        # dictionary to store levels
         self.levels = {}
         self.run_count = 0
 
         while True:
             self.tone_heard = True
+            self.run_count = 0
 
             while self.tone_heard:
+                if self.level not in self.levels:
+                    self.levels[self.level] = 0
 
                 # Abspielen Prüfton
                 self.play_tone()
 
                 # Antwort?
-                if self.tone_heard:
-                    # Ja
-                    self.level -= 10
-                    self.levels[self.level] = 1       
-                
-                # Nein
-                else:
+                if self.tone_heard:   
+                    self.levels[self.level] += 1        
+                    self.level -= 10      
+                else:                                     
                     self.level += 5
 
             while not self.tone_heard:
+                if self.level not   in self.levels:
+                    self.levels[self.level] = 0
 
-                # Abspielen Prüfton
+                # Abspielen Prüfton       
                 self.play_tone()
 
                 # Antwort?
                 if not self.tone_heard:
-                   
-                    # Nein
                     self.level += 5
-                
-                # Ja
+
                 # 3x gleicher Pegel bei maximal 5 Durchgängen?
                 elif self.levels[self.level] >= 3 and self.run_count < 5:
-                    # Abspeichern des Schwellenwertes -> nächste frequenz
+                    # Abspeichern des Schwellenwertes -> nächste Frequenz
                     self.hearing_thresholds[freq] = self.level
                     break
 
                 # weniger als 5 Durchgänge?
                 elif self.run_count >= 5:
-                    # nein
+                    self.levels[self.level] += 1 #?? 
                     self.level += 10
-                # ja
                 else:
                     self.levels[self.level] += 1
 
 
-
+ 
     def run_all_tests(self): # TODO for left and right
         for freq in self.frequencies:
             self.run_test(freq)
