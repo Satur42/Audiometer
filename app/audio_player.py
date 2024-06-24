@@ -1,6 +1,8 @@
 import numpy as np
 import sounddevice as sd
 import argparse
+import os
+import platform
 
 class AudioPlayer:
 
@@ -8,6 +10,7 @@ class AudioPlayer:
         """An audio player that can play sine beeps at various frequencies, volumes and with various durations.
         Automatically detects current samplerate of selected sound device.
         """
+        
         self.fs = self.get_device_samplerate()
         self.beep_duration = 10
         self.volume = 0.5
@@ -85,3 +88,17 @@ class AudioPlayer:
         args = parser.parse_args(remaining)
         return sd.query_devices(args.device, 'output')['default_samplerate']
     
+
+def main():
+    ap = AudioPlayer()
+    ap.play_beep(440, 0.1, 2)
+    sd.wait()
+    print("Beep played successfully")
+    ap.play_beep(880, 0.1, 2)
+    sd.wait()
+    print("Beep played successfully")
+    ap.stop()
+    print("Playback stopped")
+
+if __name__ == "__main__":
+    main()

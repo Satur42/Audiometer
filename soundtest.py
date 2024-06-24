@@ -57,5 +57,41 @@ def test_device(device_id):
         print(f"Fehler beim Testen des Geräts {device_id}: {e}\n\n")
 
 # Durchlaufen und Testen aller Geräte
+# for device_id in range(len(sd.query_devices())):
+#     test_device(device_id)
+
+
+import sounddevice as sd
+import numpy as np
+import os
+
+# Setze Umgebungsvariable, um sicherzustellen, dass PulseAudio verwendet wird
+os.environ['PA_ALSA_PLUGHW'] = '1'
+
+# Frequenz und Amplitude anpassen
+duration = 2
+frequency = 440.0
+volume = 0.5  # Erhöhen Sie die Amplitude
+
+# Sample Rate und Wellenform erstellen
+fs = 44100  # Standard-Samplerate, falls nicht bekannt
+t = np.linspace(0, duration, int(fs * duration), endpoint=False)
+waveform = volume * np.sin(2 * np.pi * frequency * t)
+
+def test_device(device_id):
+    try:
+        sd.default.device = device_id
+        device_info = sd.query_devices(device_id)
+        output_channels = device_info['max_output_channels']
+        print(f"Teste Gerät {device_id}: {device_info['name']} mit {output_channels} Ausgabekanälen")
+        
+        # Play sound
+        sd.play(waveform, samplerate=fs)
+        sd.wait()
+        print(f"Ton erfolgreich auf Gerät {device_id} abgespielt: {device_info['name']}\n\n")
+    except Exception as e:
+        print(f"Fehler beim Testen des Geräts {device_id}: {e}\n\n")
+
+# Teste alle Ausgabegeräte
 for device_id in range(len(sd.query_devices())):
     test_device(device_id)
