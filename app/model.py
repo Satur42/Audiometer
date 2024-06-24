@@ -134,7 +134,7 @@ class Test(Procedure):
         self.frequencies = [1000, 2000, 4000, 8000, 500, 250, 125]
         self.current_frequency_index = 0
         self.run_count = 0
-        self.hearing_thresholds = {freq: None for freq in self.frequencies}                
+        self.hearing_thresholds = {freq: None for freq in self.frequencies}  # TODO               
     
 
     def run_test(self, freq):
@@ -193,6 +193,7 @@ class Test(Procedure):
 
 
     def run_all_tests(self):
+        # TODO nochmal nachlesen in welcher Reihenfolge und Ohren etc.
         for freq in self.frequencies:
             self.run_test(freq)
         print(self.hearing_thresholds)
