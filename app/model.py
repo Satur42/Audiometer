@@ -180,7 +180,7 @@ class Test(Procedure):
                     break
 
                 elif self.run_count >= 5:
-                    self.level s[self.level] += 1
+                    self.levels[self.level] += 1
                     print(f"Tone heard for the {self.levels[self.level]} time(s)." )
 
                 else:
