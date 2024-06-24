@@ -95,25 +95,25 @@ class Familiarization(Procedure):
             self.tone_heard = True
 
             # first loop (always -20dBHL)
-            while self.tone_heard == True:
+            while self.tone_heard:
                 self.play_tone()
                 
-                if self.tone_heard == True:
+                if self.tone_heard:
                     self.level -= 20
                 else:
                     self.level += 10
             
             # second loop (always +10dBHL)
-            while self.tone_heard == False:
+            while not self.tone_heard:
                 self.play_tone()
 
-                if self.tone_heard == False:
+                if not self.tone_heard:
                     self.level += 10
 
             # replay tone with same level
             self.play_tone()
 
-            if self.tone_heard == False:
+            if not self.tone_heard:
                 self.fails += 1
                 if self.fails >= 2:
                     print("Familiarization unsuccessful. Please read rules and start again.")
@@ -143,25 +143,53 @@ class Test(Procedure):
 
         self.frequency = freq
         self.level = self.startlevel
-        self.response_count = 0
+        self.levels = {}
         self.run_count = 0
 
-        while self.response_count < 3 and self.run_count < 5:
-            self.play_tone()
+        while True:
+            self.tone_heard = True
 
-            if self.tone_heard:
-                self.response_count += 1
-                if self.response_count >= 3:
-                    self.hearing_thresholds[freq] = self.level
-                    break
-                self.level -= 10
-            else:
-                self.run_count += 1
-                if self.run_count >= 5:
+            while self.tone_heard:
+
+                # Abspielen Prüfton
+                self.play_tone()
+
+                # Antwort?
+                if self.tone_heard:
+                    # Ja
+                    self.level -= 10
+                    self.levels[self.level] = 1       
+                
+                # Nein
+                else:
                     self.level += 5
 
-        if self.hearing_thresholds[freq] is None:
-            self.hearing_thresholds[freq] = self.level
+            while not self.tone_heard:
+
+                # Abspielen Prüfton
+                self.play_tone()
+
+                # Antwort?
+                if not self.tone_heard:
+                   
+                    # Nein
+                    self.level += 5
+                
+                # Ja
+                # 3x gleicher Pegel bei maximal 5 Durchgängen?
+                elif self.levels[self.level] >= 3 and self.run_count < 5:
+                    # Abspeichern des Schwellenwertes -> nächste frequenz
+                    self.hearing_thresholds[freq] = self.level
+                    break
+
+                # weniger als 5 Durchgänge?
+                elif self.run_count >= 5:
+                    # nein
+                    self.level += 10
+                # ja
+                else:
+                    self.levels[self.level] += 1
+
 
 
     def run_all_tests(self): # TODO for left and right
@@ -171,10 +199,15 @@ class Test(Procedure):
         return self.hearing_thresholds
 
 
+# self.response_count += 1
+                # if self.response_count >= 3:
+                #     print("3x gleicher Pegel bei maximal fünf Durchgängen!")
+                #     self.hearing_thresholds[freq] = self.level
+                #     break
 
 
+#   
 
-fam = Familiarization()
-fam.familiarize()
-
+test = Test()
+test.run_test(1000)
 
