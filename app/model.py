@@ -130,7 +130,6 @@ class Test(Procedure):
 
         super().__init__(startlevel, signal_length)
         self.frequencies = [1000, 2000, 4000, 8000, 500, 250, 125]
-        self.current_frequency_index = 0
         self.run_count = 0
         self.hearing_thresholds = {freq: {} for freq in self.frequencies}             
     
@@ -176,7 +175,7 @@ class Test(Procedure):
                     if self.hearing_thresholds[freq].get(ear) is None:
                         self.hearing_thresholds[freq][ear] = [self.level]
                     else:
-                        self.hearing_thresholds[freq][ear] = set(self.hearing_thresholds[freq][ear].append(self.level))
+                        self.hearing_thresholds[freq][ear] = set(self.hearing_thresholds[freq][ear] + [self.level])
                     print(self.hearing_thresholds)
                     stop_outer_loop = True
                     break
@@ -209,5 +208,6 @@ class Test(Procedure):
 
 
 test = Test()
-test.run__one_freq_test(1000)      
+#test.run__one_freq_test(1000)     
+test.run_all_tests() 
 
