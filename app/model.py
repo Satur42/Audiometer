@@ -132,10 +132,10 @@ class Test(Procedure):
         self.frequencies = [1000, 2000, 4000, 8000, 500, 250, 125]
         self.current_frequency_index = 0
         self.run_count = 0
-        self.hearing_thresholds = {freq: None for freq in self.frequencies}  # TODO               
+        self.hearing_thresholds = {freq: {"left": None, "right": None} for freq in self.frequencies}  # TODO               
     
 
-    def run__one_freq_test(self, freq):
+    def run__one_freq_test(self, freq, ear="right"):
         self.frequency = freq
         self.level = self.startlevel
         self.levels = {}
@@ -173,7 +173,8 @@ class Test(Procedure):
 
                 elif self.levels[self.level] >= 2 and self.run_count < 5:
                     print("3x gleicher Pegel bei maximal fünf Durchgängen!  ")
-                    self.hearing_thresholds[freq] = self.level
+                    self.hearing_thresholds[freq][ear] = self.level
+                    print(self.hearing_thresholds)
                     stop_outer_loop = True
                     break
 
