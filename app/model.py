@@ -50,7 +50,6 @@ class Procedure():
         If key is pressed, set tone_heard to True.
         """
         self.tone_heard = False
-        #   print("playing tone..")
         self.ap.play_beep(self.frequency, self.dbhl_to_volume(self.level), self.signal_length)
         listener = keyboard.Listener(on_press=self.key_press, on_release=None)
         listener.start()
@@ -61,7 +60,6 @@ class Procedure():
             time.sleep(step_size / 1000)
             current_wait_time += step_size
         listener.stop()
-        #print("listener stopped.")
         self.ap.stop()
         if self.tone_heard == False:
             print("Tone not heard :(")
@@ -137,7 +135,7 @@ class Test(Procedure):
         self.hearing_thresholds = {freq: None for freq in self.frequencies}  # TODO               
     
 
-    def run_test(self, freq):
+    def run__one_freq_test(self, freq):
         self.frequency = freq
         self.level = self.startlevel
         self.levels = {}
@@ -156,7 +154,7 @@ class Test(Procedure):
                 print(f"playing tone at {self.level} dBHL.")
                 self.play_tone()
 
-                if self.tone_heard:
+                if self.tone_heard:   
                     self.levels[self.level] += 1
                     print(f"Tone heard for the {self.levels[self.level]} time(s)." )     
                     self.level -= 10
@@ -179,7 +177,7 @@ class Test(Procedure):
                     stop_outer_loop = True
                     break
 
-                elif self.run_count >= 5:
+                elif self.run_count <= 5:
                     self.levels[self.level] += 1
                     print(f"Tone heard for the {self.levels[self.level]} time(s)." )
 
@@ -188,18 +186,18 @@ class Test(Procedure):
                     print(f"Tone heard for the {self.levels[self.level]} time(s)." )  
                     self.level += 10
                     self.run_count = 0
-            if stop_outer_loop:
-                break
+            
+          
 
-
+   
     def run_all_tests(self):
         # TODO nochmal nachlesen in welcher Reihenfolge und Ohren etc.
         for freq in self.frequencies:
-            self.run_test(freq)
+            self.run__one_freq_test(freq)
         print(self.hearing_thresholds)
         return self.hearing_thresholds  
 
 
 test = Test()
-test.run_test(1000)
+test.run__one_freq_test(1000)
 
