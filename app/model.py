@@ -132,7 +132,7 @@ class Test(Procedure):
         self.frequencies = [1000, 2000, 4000, 8000, 500, 250, 125]
         self.current_frequency_index = 0
         self.run_count = 0
-        self.hearing_thresholds = {freq: {"left": None, "right": None} for freq in self.frequencies}  # TODO               
+        self.hearing_thresholds = {freq: {} for freq in self.frequencies}             
     
 
     def run__one_freq_test(self, freq, ear="right"):
@@ -173,11 +173,14 @@ class Test(Procedure):
 
                 elif self.levels[self.level] >= 2 and self.run_count < 5:
                     print("3x gleicher Pegel bei maximal fünf Durchgängen!  ")
-                    self.hearing_thresholds[freq][ear] = self.level
+                    if self.hearing_thresholds[freq].get(ear) is None:
+                        self.hearing_thresholds[freq][ear] = [self.level]
+                    else:
+                        self.hearing_thresholds[freq][ear] = set(self.hearing_thresholds[freq][ear].append(self.level))
                     print(self.hearing_thresholds)
                     stop_outer_loop = True
                     break
-
+     
                 elif self.run_count <= 5:
                     self.levels[self.level] += 1
                     print(f"Tone heard for the {self.levels[self.level]} time(s)." )
@@ -188,17 +191,23 @@ class Test(Procedure):
                     self.level += 10
                     self.run_count = 0
             
-          
-
+        
    
     def run_all_tests(self):
         # TODO nochmal nachlesen in welcher Reihenfolge und Ohren etc.
-        for freq in self.frequencies:
-            self.run__one_freq_test(freq)
+        for ear in ["right", "left"]:
+            for freq in self.frequencies:
+                self.run__one_freq_test(freq, ear)
+
+        for freq in self.frequencies: # TODO nochmal schauen wie dieses Nachprüfen gemeint ist  
+            self.run__one_freq_test(1000, ear="left")
+            if len(self.hearing_thresholds[1000].get("left")):
+                break
+
         print(self.hearing_thresholds)
         return self.hearing_thresholds  
 
 
 test = Test()
-test.run__one_freq_test(1000)
+test.run__one_freq_test(1000)      
 
