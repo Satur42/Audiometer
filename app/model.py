@@ -50,7 +50,7 @@ class Procedure():
         If key is pressed, set tone_heard to True.
         """
         self.tone_heard = False
-        self.ap.play_beep(self.frequency, self.dbhl_to_volume(self.level), self.signal_length)
+        self.ap.play_beep(self.frequency, self.dbhl_to_volume(self.level), self.signal_length)                  
         listener = keyboard.Listener(on_press=self.key_press, on_release=None)
         listener.start()
         current_wait_time = 0
@@ -200,8 +200,8 @@ class Test(Procedure):
 
         for freq in self.frequencies: # TODO nochmal schauen wie dieses Nachprüfen gemeint ist  
             self.run__one_freq_test(1000, ear="left")
-            if len(self.hearing_thresholds[1000].get("left")):
-                break
+            if len(self.hearing_thresholds[1000].get("left")) == 1:
+                break 
 
         print(self.hearing_thresholds)
         return self.hearing_thresholds  

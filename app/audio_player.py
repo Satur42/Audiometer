@@ -42,6 +42,7 @@ class AudioPlayer:
         self.frequency = frequency
         self.volume = volume
         self.beep_duration = duration
+        sd.default.device = 10
         sd.play(self.generate_tone(), self.fs)
 
     def stop(self):
