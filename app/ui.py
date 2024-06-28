@@ -157,6 +157,27 @@ class MainMenu(ttk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
+        '''
+        self.patient_number_label = ttk.Label(self, text="Patient Number:")
+        self.patient_number_label.pack(padx=10, pady=10)
+        self.patient_number_entry = ttk.Entry(self)
+        self.patient_number_entry.pack(padx=10, pady=10)
+
+        self.first_name_label = ttk.Label(self, text="First Name (Optional):")
+        self.first_name_label.pack(padx=10, pady=10)
+        self.first_name_entry = ttk.Entry(self)
+        self.first_name_entry.pack(padx=10, pady=10)
+
+        self.last_name_label = ttk.Label(self, text="Last Name (Optional):")
+        self.last_name_label.pack(padx=10, pady=10)
+        self.last_name_entry = ttk.Entry(self)
+        self.last_name_entry.pack(padx=10, pady=10)
+
+        self.gender_label = ttk.Label(self, text="Gender (M/F, Optional):")
+        self.gender_label.pack(padx=10, pady=10)
+        self.gender_entry = ttk.Entry(self)
+        self.gender_entry.pack(padx=10, pady=10)
+        '''
         self.label = ttk.Label(self, text="\nBitte wählen Sie ein Programm", font=('Arial', 16))
         self.label.pack(pady=10)
 
@@ -183,6 +204,19 @@ class MainMenu(ttk.Frame):
             self.start_button.pack(pady=10)
 
     def run_familiarization(self):
+        ''' 
+        patient_number = self.patient_number_entry.get()
+        first_name = self.first_name_entry.get()
+        last_name = self.last_name_entry.get()
+        gender = self.gender_entry.get()
+
+        self.parent.user_info = {
+            "patient_number": patient_number,
+            "first_name": first_name,
+            "last_name": last_name,
+            "gender": gender
+        }
+        '''
         self.parent.frames[FamiliarizationPage].selected_option = self.selected_option 
         self.parent.show_frame(FamiliarizationPage)
 
@@ -231,6 +265,8 @@ class FamiliarizationPage(ttk.Frame):
     
         """Runs the familiarization process
         """
+        #user_info = self.parent.user_info
+        #self.familiarization = Familiarization(user_info=user_info)
         self.parent.show_frame(DuringFamiliarizationView)
         threading.Thread(target=self.parent.frames[DuringFamiliarizationView].start_familiarization).start()
 
@@ -283,13 +319,17 @@ class DuringFamiliarizationView(ttk.Frame):
         """Creates the widgets for the view
         """
         self.info = ttk.Label(self, text=self.text)
-        self.info.grid(row=0, column=0, padx=10, pady=10)
+        self.info.pack(padx=10, pady=10)
 
-        self.progress = ttk.Progressbar(self, orient="horizontal", mode="determinate")
-        self.progress.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
+        self.progress_frame = ttk.Frame(self)
+        self.progress_frame.pack(padx=10, pady=10)
 
-        self.progress_label = ttk.Label(self, text="0%")
-        self.progress_label.grid(row=2, column=0, padx=10, pady=10)
+        self.progress = ttk.Progressbar(self.progress_frame, orient="horizontal", length=300, mode="determinate")
+        self.progress.pack(fill=tk.BOTH, expand=True)
+
+        self.progress_label = ttk.Label(self, text="0%", anchor="center")
+        self.progress_label.pack(padx=10, pady=10)
+        #self.progress_label.place(relx=0.5, rely=0.5, anchor="center")
 
 
     def update_progress(self, value):
@@ -297,6 +337,7 @@ class DuringFamiliarizationView(ttk.Frame):
         """
         self.progress["value"] = value
         self.progress_label["text"] = f"{value}%"
+        self.progress_label.update_idletasks()
 
     def start_familiarization(self):
         """Starts the familiarization process and updates the progress bar

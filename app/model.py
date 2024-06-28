@@ -5,6 +5,7 @@ import time
 import random
 import tempfile as tfile
 import csv
+import datetime
 
 
 class Procedure():
@@ -72,7 +73,28 @@ class Procedure():
             sleep_time = random.uniform(1, 2.5) # random wait time vetween 1 and 2.5
             time.sleep(sleep_time) # wait before next tone is played. #TODO test times
 
-    
+            
+        '''
+    def generate_csv_name(self):
+        """Generates the CSV file name based on user information
+
+        Returns:
+            str: generated CSV file name
+        """
+        now = datetime.datetime.now()
+        date_str = now.strftime("%Y%m%d_%H%M%S")
+
+        patient_number = self.user_info.get("patient_number", "Unknown")
+        first_name = self.user_info.get("first_name", "")
+        last_name = self.user_info.get("last_name", "")
+        #gender = self.user_info.get("gender", "")
+
+        name_parts = [patient_number, first_name, last_name, date_str]
+        filename = "_".join(filter(None, name_parts)) + ".csv"
+
+        return filename
+        ''' 
+
     def create_temp_csv(self, id="", **aditional_data):
         """creates a temporary CSV file with the relevant frequency bands as a header
         and NaN in the second and third line as starting value for each band.
@@ -85,7 +107,11 @@ class Procedure():
         Returns:
             str: name of temporary file
         """
+
+        #filename = self.generate_csv_name()
+
         with tfile.NamedTemporaryFile(mode='w+', delete=False, newline='', suffix='.csv') as temp_file:
+        #with open(filename, mode='w+', newline='', suffix='.csv') as temp_file:
             # Define the CSV writer
             csv_writer = csv.writer(temp_file)
 
