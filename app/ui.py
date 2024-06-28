@@ -7,6 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from app.instructions import text_Familiarization
 import ttkbootstrap as tb
 from PIL import Image, ImageTk
+import time
 
 class App(tb.Window):
     def __init__(self, familiarization_func, program_funcs:dict):
@@ -222,9 +223,18 @@ class FamiliarizationPage(ttk.Frame):
     def run_familiarization(self):
         """Runs the familiarization process
         """
+        '''
         self.parent.show_frame(DuringFamiliarizationView)
         self.parent.wait_for_process(self.parent.frames[DuringFamiliarizationView].program, 
                                      lambda: self.parent.show_frame(ProgramPage))
+        '''
+    
+        """Runs the familiarization process
+        """
+        self.parent.show_frame(DuringFamiliarizationView)
+        threading.Thread(target=self.parent.frames[DuringFamiliarizationView].start_familiarization).start()
+
+
 
 class ProgramPage(ttk.Frame):
     def __init__(self, parent):
@@ -275,6 +285,34 @@ class DuringFamiliarizationView(ttk.Frame):
         self.info = ttk.Label(self, text=self.text)
         self.info.grid(row=0, column=0, padx=10, pady=10)
 
+        self.progress = ttk.Progressbar(self, orient="horizontal", mode="determinate")
+        self.progress.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
+
+        self.progress_label = ttk.Label(self, text="0%")
+        self.progress_label.grid(row=2, column=0, padx=10, pady=10)
+
+
+    def update_progress(self, value):
+        """Updates the progress bar and label
+        """
+        self.progress["value"] = value
+        self.progress_label["text"] = f"{value}%"
+
+    def start_familiarization(self):
+        """Starts the familiarization process and updates the progress bar
+        """
+        max_value = 100  # Define the maximum value for the progress bar
+        step_value = max_value // 10  # Example: 10 steps
+
+        for i in range(1, 11):
+            self.program()
+            self.update_progress(i * step_value)
+            self.update_idletasks()
+            time.sleep(1)  # Simulate time taken for each step (replace with actual process duration)
+
+        self.parent.show_frame(ProgramPage)  # Show the next page after familiarization
+
+
 class DuringProcedureView(ttk.Frame):
     def __init__(self, parent, program_func, text):
         """View during main program
@@ -295,6 +333,7 @@ class DuringProcedureView(ttk.Frame):
         """
         self.info = ttk.Label(self, text=self.text)
         self.info.grid(row=0, column=0, padx=10, pady=10)
+        
 
 class ResultPage(ttk.Frame):
     def __init__(self, parent):

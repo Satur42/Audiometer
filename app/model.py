@@ -175,6 +175,10 @@ class Familiarization(Procedure):
         self.fails = 0 # number of times familiarization failed
         self.tempfile = self.create_temp_csv(id=id, **additional_data) # create a temporary file to store level at frequencies
 
+    def update_progress(self, value):
+        if self.progress_callback:
+            self.progress_callback(value)
+
     def get_temp_csv_filename(self):
         return self.tempfile
 
