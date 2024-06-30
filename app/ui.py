@@ -17,7 +17,7 @@ class App(tb.Window):
             familiarization_func (function): function to be called for familiarization
             *program_funcs (function): function(s) to be called for the main program
         """
-        super().__init__(themename="superhero")  # Set/change the theme Link: https://ttkbootstrap.readthedocs.io/en/latest/themes/dark/
+        super().__init__(themename="sandstone")  # Set/change the theme Link: https://ttkbootstrap.readthedocs.io/en/latest/themes/dark/
 
         # General settings
         self.title("Sound Player")
@@ -25,8 +25,6 @@ class App(tb.Window):
         self.minsize(650,650)
         self.attributes('-fullscreen', True)  #for fullscreen mode
         self.bind("<Escape>", self.exit_fullscreen)
-        
-        #self.set_icon("app/00_TUBerlin_Logo_rot.jpg") change the icon maybe? #TODO
 
         
         #this might solve the different GUI on macOS LINUX and WINDOWS problem... #TODO
@@ -81,12 +79,12 @@ class App(tb.Window):
         file_menu = tk.Menu(menubar, tearoff=0)
         file_menu.add_command(label="Startseite", command=lambda: self.show_frame(MainMenu))
 
-        # Settings for chaning the theme ##i've randomly selected 4 themes (2 dark and 2 lighthttps://ttkbootstrap.readthedocs.io/en/latest/themes/dark/
+        # Settings for chaning the theme #Link: https://ttkbootstrap.readthedocs.io/en/latest/themes/dark/
         ChangeTheme = tk.Menu(file_menu, tearoff=0)
-        ChangeTheme.add_command(label="theme 1", command=lambda: self.change_theme("superhero"))
-        ChangeTheme.add_command(label="theme 2", command=lambda: self.change_theme("solar"))
-        ChangeTheme.add_command(label="theme 3", command=lambda: self.change_theme("cosmo"))
-        ChangeTheme.add_command(label="theme 4", command=lambda: self.change_theme("sandstone"))
+        #ChangeTheme.add_command(label="dark", command=lambda: self.change_theme("cyborg"))
+        ChangeTheme.add_command(label="dark", command=lambda: self.change_theme("solar"))
+        #ChangeTheme.add_command(label="theme 3", command=lambda: self.change_theme("cosmo"))
+        ChangeTheme.add_command(label="light", command=lambda: self.change_theme("sandstone"))
         file_menu.add_cascade(label="change theme", menu=ChangeTheme)
 
         file_menu.add_separator()
@@ -157,23 +155,24 @@ class MainMenu(ttk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        '''
-        self.patient_number_label = ttk.Label(self, text="Patient Number:")
+
+        self.patient_number_label = ttk.Label(self, text="Probandennummer:",font=('Arial', 12))
         self.patient_number_label.pack(padx=10, pady=10)
-        self.patient_number_entry = ttk.Entry(self)
+        self.patient_number_entry = ttk.Entry(self,width=self.button_width)
         self.patient_number_entry.pack(padx=10, pady=10)
 
-        self.first_name_label = ttk.Label(self, text="First Name (Optional):")
+        self.first_name_label = ttk.Label(self, text="Vorname (Optional):",font=('Arial', 12))
         self.first_name_label.pack(padx=10, pady=10)
-        self.first_name_entry = ttk.Entry(self)
+        self.first_name_entry = ttk.Entry(self, width=self.button_width)
         self.first_name_entry.pack(padx=10, pady=10)
 
-        self.last_name_label = ttk.Label(self, text="Last Name (Optional):")
+        self.last_name_label = ttk.Label(self, text="Nachname (Optional):",font=('Arial', 12))
         self.last_name_label.pack(padx=10, pady=10)
-        self.last_name_entry = ttk.Entry(self)
+        self.last_name_entry = ttk.Entry(self,width=self.button_width)
         self.last_name_entry.pack(padx=10, pady=10)
 
-        self.gender_label = ttk.Label(self, text="Gender (M/F, Optional):")
+        '''
+        self.gender_label = ttk.Label(self, text="Geschlecht (M/F, Optional):")
         self.gender_label.pack(padx=10, pady=10)
         self.gender_entry = ttk.Entry(self)
         self.gender_entry.pack(padx=10, pady=10)
@@ -217,6 +216,10 @@ class MainMenu(ttk.Frame):
             "gender": gender
         }
         '''
+        patient_number = self.patient_number_entry.get()
+        if not patient_number:
+            messagebox.showwarning("Warnung", "Bitte geben Sie eine Patientennummer ein.")
+            return
         self.parent.frames[FamiliarizationPage].selected_option = self.selected_option 
         self.parent.show_frame(FamiliarizationPage)
 
