@@ -1,3 +1,0 @@
-# ui Module
-
-::: app.ui

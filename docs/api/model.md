@@ -1,3 +1,0 @@
-# model Module
-
-::: app.model

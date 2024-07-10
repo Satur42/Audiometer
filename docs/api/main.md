@@ -1,3 +1,0 @@
-# main Module
-
-::: app.main

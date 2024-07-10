@@ -1,3 +1,0 @@
-# audiogram Module
-
-::: app.audiogram
