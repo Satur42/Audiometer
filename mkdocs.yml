@@ -1,17 +1,16 @@
 site_name: Audiometer Documentation
 theme:
-  name: readthedocs # or material
+  name: readthedocs  # oder material
   features:
-  - navigation.tabs
-  - navigation.sections
-  - toc.integrate
-  - navigation.top
-  - search.suggest
-  - search.highlight
-  - content.tabs.link
-  - content.code.annotations
-  - content.code.copy
-
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotations
+    - content.code.copy
 
 plugins:
   - search
@@ -21,6 +20,13 @@ plugins:
         python:
           options:
             docstring_style: google
+  - i18n:
+      default_language: en
+      languages:
+        - en: en
+          name: English
+        - locale: de
+          name: Deutsch
 
 nav:
   - Home: index.md
@@ -35,3 +41,32 @@ nav:
       - model: api/model.md
       - ui: api/ui.md
   - About: about.md
+
+extra:
+  i18n_nav:
+    en:
+      - Home: index.md
+      - User Guide:
+          - Introduction: user_guide/intro.md
+          - Installation: user_guide/installation.md
+          - Hardware Requirements: user_guide/hardware.md
+      - Reference Manual:
+          - audio_player: api/audio_player.md
+          - audiogram: api/audiogram.md
+          - main: api/main.md
+          - model: api/model.md
+          - ui: api/ui.md
+      - About: about.md
+    de:
+      - Startseite: index.de.md
+      - Benutzerhandbuch:
+          - Einführung: user_guide/intro.de.md
+          - Installation: user_guide/installation.de.md
+          - Hardware-Anforderungen: user_guide/hardware.de.md
+      - Referenzhandbuch:
+          - audio_player: api/audio_player.de.md
+          - audiogram: api/audiogram.de.md
+          - main: api/main.de.md
+          - model: api/model.de.md
+          - ui: api/ui.de.md
+      - Über: about.de.md
