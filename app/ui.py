@@ -52,7 +52,7 @@ class App(tb.Window):
         # Ensure the default save path exists
         os.makedirs(self.save_path, exist_ok=True)
 
-        self.set_icon("app/Logo_NBG") #change the icon maybe? #TODO
+        self.set_icon("Logo_NBG.png") #change the icon maybe? #TODO 
         
         self.tk.call('tk', 'scaling', 2.0)  # Adjust for high-DPI displays
         
@@ -526,7 +526,7 @@ class ResultPage(ttk.Frame):
 
         # Create a frame for the images
         self.image_frame = ttk.Frame(self)
-        self.image_frame.pack(anchor="center")   #,fill="both", expand=True)
+        self.image_frame.pack(pady=10)
 
         # Button to go back to the main menu
         self.BackToMainMenu = ttk.Button(self, text="Zurück zur Startseite", command=lambda: self.parent.show_frame(MainMenu))
@@ -550,7 +550,7 @@ class ResultPage(ttk.Frame):
 
                 label = ttk.Label(self.image_frame, image=photo)
                 label.image = photo
-                label.pack(padx=10, pady=10, side="left")
+                label.pack(padx=10, pady=10, anchor="center")
 
 
     def back_to_MainMenu(self):
