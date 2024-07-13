@@ -52,7 +52,7 @@ class App(tb.Window):
         # Ensure the default save path exists
         os.makedirs(self.save_path, exist_ok=True)
 
-        #self.set_icon("app/00_TUBerlin_Logo_rot.jpg") change the icon maybe? #TODO
+        self.set_icon("app/Logo_NBG") #change the icon maybe? #TODO
         
         self.tk.call('tk', 'scaling', 2.0)  # Adjust for high-DPI displays
         
@@ -90,9 +90,6 @@ class App(tb.Window):
 
         # Create menubar
         self.create_menubar()
-
-        # Variable for threading
-        self.process_done = False
 
         # Override the close button protocol
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -140,11 +137,12 @@ class App(tb.Window):
 
 
     def set_icon(self, path):
-        """Set the window icon using Pillow"""
-        img = Image.open(path)
-        photo = ImageTk.PhotoImage(img)
-        self.iconphoto(False, photo)          
-
+        try:
+            img = Image.open(path)
+            img = ImageTk.PhotoImage(img)
+            self.iconphoto(False, img)
+        except Exception as e:
+            print(f"Failed to set icon: {e}")
 
     def show_frame(self, page):
         """Show a frame for the given page name
@@ -176,8 +174,7 @@ class App(tb.Window):
             callback (function): function to be called when process is done
         """
         process()
-        self.process_done = True
-        self.after(100, callback)
+        self.after(0, callback)
 
 
     def change_save_path(self):
@@ -190,7 +187,7 @@ class App(tb.Window):
 
     def on_closing(self):
         """Ask for confirmation before closing the program"""
-        if messagebox.askyesno(title="Quit", message="Möchten Sie wirklich das Programm beenden?"):
+        if messagebox.askyesno(title="Programm beenden", message="Möchten Sie wirklich das Programm beenden?"):
             self.destroy()
 
 
@@ -317,10 +314,13 @@ class MainMenu(ttk.Frame):
     def show_start_button(self):
         if self.start_button is None:
             self.start_button = ttk.Button(self,
-                                           text="Test starten",
+                                           text="Test starten" if self.selected_option != "Kalibrierung" else "Kalibrierung starten",
                                            command=self.go_to_next_page,
                                            width=self.button_width)
             self.start_button.pack(pady=10)
+        else:
+            self.start_button.config(text="Test starten" if self.selected_option != "Kalibrierung" else "Kalibrierung starten")
+
 
 
     def go_to_next_page(self):
@@ -389,17 +389,11 @@ class FamiliarizationPage(ttk.Frame):
                                      lambda: self.parent.show_frame(ProgramPage))
         time.sleep(0.001)
         self.update()
-        counter = 0
-        sleep_time = random.uniform(1, 2.5) # random time in seconds between 1 and 2.5 to update progress bar
-        while self.parent.frames[DuringFamiliarizationView].progress_var.get() < 100 and not self.parent.process_done:
+        while self.parent.frames[DuringFamiliarizationView].progress_var.get() < 100:
             progress = int(self.parent.frames[DuringFamiliarizationView].get_progress() * 100)
-            if counter >= sleep_time * 1000:
-                self.parent.frames[DuringFamiliarizationView].progress_var.set(progress)
-                counter = 0
-            time.sleep(0.001)
-            counter += 1
+            self.parent.frames[DuringFamiliarizationView].progress_var.set(progress)
+            time.sleep(1)
             self.update()
-        self.parent.process_done = False
 
 
 class ProgramPage(ttk.Frame):
@@ -437,17 +431,12 @@ class ProgramPage(ttk.Frame):
         
         time.sleep(0.001)
         self.update()
-        counter = 0
-        sleep_time = random.uniform(1, 2.5) # random time in seconds between 1 and 2.5 to update progress bar
-        while self.parent.frames[self.selected_option].progress_var.get() < 100 and not self.parent.process_done:
+        while self.parent.frames[self.selected_option].progress_var.get() < 100:
             progress = int(self.parent.frames[self.selected_option].get_progress() * 100)
-            if counter >= sleep_time * 1000:
-                self.parent.frames[self.selected_option].progress_var.set(progress)
-                counter = 0
-            time.sleep(0.001)
-            counter += 1
+            self.parent.frames[self.selected_option].progress_var.set(progress)
+            sleep_time = random.uniform(1, 2.5) # random time between 1 and 2.5
+            time.sleep(sleep_time) # wait before updating progress bar so that it has no influence
             self.update()
-        self.parent.process_done = False
 
 
     def show_results(self):
