@@ -52,7 +52,7 @@ class App(tb.Window):
         # Ensure the default save path exists
         os.makedirs(self.save_path, exist_ok=True)
 
-        self.set_icon("Logo_NBG.png") #change the icon maybe? #TODO 
+        self.set_icon("app/Logo_NBG.png") #change the icon maybe? #TODO 
         
         self.tk.call('tk', 'scaling', 2.0)  # Adjust for high-DPI displays
         
