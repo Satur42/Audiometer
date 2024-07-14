@@ -1,3 +1,3 @@
-# audio_player Module
+# Audioplayer
 
 ::: app.audio_player
