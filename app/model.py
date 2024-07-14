@@ -579,7 +579,7 @@ class ScreeningProcedure(Procedure):
         
 
         #TODO das als default, aber  variabel in der GUI?
-        self.freq_levels = {125: 20, 250: 20, 500: 20, 1000: 20, 2000: 20, 4000: 20, 8000: 20}
+        self.freq_levels = {125: 70, 250: 70, 500: 70, 1000: 70, 2000: 70, 4000: 70, 8000: 70}
 
         self.progress_step = 1 / 14
 
