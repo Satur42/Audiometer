@@ -48,9 +48,13 @@ class App(tb.Window):
         self.bind("<Escape>", self.exit_fullscreen)
 
         self.save_path = os.path.join(os.getcwd())
-        
-        # Ensure the default save path exists
         os.makedirs(self.save_path, exist_ok=True)
+
+        # Update program_funcs to use the current save_path
+        self.program_funcs = {key: lambda save_path=self.save_path: func(save_path=save_path) for key, func in program_funcs.items()}
+        self.familiarization_func = lambda save_path=self.save_path: familiarization_func(save_path=save_path)
+        self.calibration_funcs = [lambda save_path=self.save_path: func(save_path=save_path) for func in calibration_funcs]
+
 
         #self.set_icon("app/00_TUBerlin_Logo_rot.jpg") change the icon maybe? #TODO
         
@@ -185,6 +189,10 @@ class App(tb.Window):
         new_path = filedialog.askdirectory(title="Select Folder to Save Files")
         if new_path:
             self.save_path = new_path
+            # Update program_funcs to use the new save_path
+            self.program_funcs = {key: lambda save_path=self.save_path: func(save_path=save_path) for key, func in self.program_funcs.items()}
+            self.familiarization_func = lambda save_path=self.save_path: self.original_familiarization_func(save_path=save_path)
+            self.calibration_funcs = [lambda save_path=self.save_path: func(save_path=save_path) for func in self.calibration_funcs]
             messagebox.showinfo("Speicherort geändert", f"Neuer Speicherort: {self.save_path}")
 
 
@@ -336,10 +344,10 @@ class MainMenu(ttk.Frame):
                 try:
                     i = int(self.age_entry.get())
                     if i > 110 or i < 0:
-                        messagebox.showwarning("Warnung", 'Bitte geben Sie bei Alter eine gültige Zahl oder gar nichts ein.')
+                        messagebox.showwarning("Warnung", 'Bitte geben Sie beim Alter eine gültige Zahl ein.')
                         return
                 except:
-                    messagebox.showwarning("Warnung", 'Bitte geben Sie bei Alter eine gültige Zahl oder gar nichts ein.')
+                    messagebox.showwarning("Warnung", 'Bitte geben Sie beim Alter eine gültige Zahl ein.')
                     return
 
             patient_folder = os.path.join(self.parent.save_path, self.patient_number)

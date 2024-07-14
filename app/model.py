@@ -12,7 +12,7 @@ from .audiogram import create_audiogram
 
 class Procedure:
 
-    def __init__(self, startlevel, signal_length, headphone_name="Sennheiser_HDA200", calibrate=True):
+    def __init__(self, startlevel, signal_length, headphone_name="Sennheiser_HDA200", calibrate=True, save_path=None):
         """The parent class for the familiarization, the main procedure, and the screening.
 
         Args:
@@ -38,7 +38,7 @@ class Procedure:
 
         self.retspl = self.get_retspl_values(headphone_name)
         self.calibration = self.get_calibration_values()
-        self.save_path = os.getcwd()  # Initialize save_path
+        self.save_path = save_path if save_path else os.getcwd()
 
 
     def get_retspl_values(self, headphone_name):
@@ -329,14 +329,14 @@ class Procedure:
 
 class Familiarization(Procedure):
 
-    def __init__(self, startlevel=40, signal_length=1, headphone_name="Sennheiser_HDA200", calibrate=True, id="", **additional_data):
+    def __init__(self, startlevel=40, signal_length=1, headphone_name="Sennheiser_HDA200", calibrate=True, id="", save_path=None, **additional_data):
         """Familiarization process
 
         Args:
             startlevel (int, optional): starting level of procedure in dB HL. Defaults to 40.
             signal_length (int, optional): length of played signals in seconds. Defaults to 1.
         """
-        super().__init__(startlevel, signal_length, headphone_name=headphone_name, calibrate=calibrate)      
+        super().__init__(startlevel, signal_length, headphone_name=headphone_name, calibrate=calibrate, save_path=save_path)      
         self.fails = 0 # number of times familiarization failed
         self.tempfile = self.create_temp_csv(id=id, **additional_data) # create a temporary file to store level at frequencies
 
@@ -400,7 +400,7 @@ class Familiarization(Procedure):
 
 class StandardProcedure(Procedure):
 
-    def __init__(self, temp_filename, signal_length=1, headphone_name="Sennheiser_HDA200", calibrate=True):
+    def __init__(self, temp_filename, signal_length=1, headphone_name="Sennheiser_HDA200", calibrate=True, save_path=None):
         """Standard audiometer process (rising level).
 
         Args:
@@ -408,7 +408,7 @@ class StandardProcedure(Procedure):
             signal_length (int, optional): length of played signal in seconds. Defaults to 1.
         """
         startlevel = int(self.get_value_from_csv('1000', temp_filename)) - 10 # 10 dB under level from familiarization
-        super().__init__(startlevel, signal_length, headphone_name=headphone_name, calibrate=calibrate)
+        super().__init__(startlevel, signal_length, headphone_name=headphone_name, calibrate=calibrate, save_path=save_path)
         self.temp_filename = temp_filename
         self.freq_order = [1000, 2000, 4000, 8000, 500, 250, 125] # order in which frequencies are tested
         
@@ -567,13 +567,13 @@ class StandardProcedure(Procedure):
         
 class ScreeningProcedure(Procedure):
 
-    def __init__(self,  temp_filename, signal_length=1, headphone_name="Sennheiser_HDA200", calibrate=True):
+    def __init__(self,  temp_filename, signal_length=1, headphone_name="Sennheiser_HDA200", calibrate=True, save_path=None):
         """Short screening process to check if subject can hear specific frequencies at certain levels.
 
         Args:
             signal_length (int, optional): length of played signals in seconds. Defaults to 1.
         """
-        super().__init__(startlevel=0, signal_length=signal_length, headphone_name=headphone_name, calibrate=calibrate)
+        super().__init__(startlevel=0, signal_length=signal_length, headphone_name=headphone_name, calibrate=calibrate, save_path=save_path)
         self.temp_filename = temp_filename
         self.freq_order = [1000, 2000, 4000, 8000, 500, 250, 125]
         
@@ -657,14 +657,14 @@ class ScreeningProcedure(Procedure):
 
 class Calibration(Procedure):
 
-    def __init__(self, startlevel=60, signal_length=10, headphone_name="Sennheiser_HDA200", **additional_data):
+    def __init__(self, startlevel=60, signal_length=10, headphone_name="Sennheiser_HDA200",  save_path=None, **additional_data):
         """Process for calibrating system.
 
         Args:
             startlevel (int, optional): starting level of procedure in dB HL. Defaults to 60.
             signal_length (int, optional): length of played signals in seconds. Defaults to 10.
         """
-        super().__init__(startlevel, signal_length, headphone_name=headphone_name, calibrate=False)      
+        super().__init__(startlevel, signal_length, headphone_name=headphone_name, calibrate=False, save_path=save_path)     
         self.tempfile = self.create_temp_csv(id="", **additional_data) # create a temporary file to store level at frequencies
         self.generator = self.get_next_freq()
         self.dbspl = self.level + self.retspl[self.frequency]
