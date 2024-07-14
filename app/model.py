@@ -414,7 +414,7 @@ class StandardProcedure(Procedure):
         self.progress_step = 0.95 / 14
 
 
-    def standard_test(self, binaural=False):
+    def standard_test(self, binaural=False, **additional_data):
         """Main function
 
         Returns:
@@ -428,7 +428,6 @@ class StandardProcedure(Procedure):
 
             if self.test_mode == True and self.jump_to_end == True:
                 self.create_final_csv_and_audiogram(self.temp_filename, binaural)
-                self.progress = 1
                 return True
             
             self.side = 'r'
@@ -436,7 +435,6 @@ class StandardProcedure(Procedure):
 
             if success_l and success_r:
                 self.create_final_csv_and_audiogram(self.temp_filename, binaural)
-                self.progress = 1
                 return True
         
         if binaural:
@@ -446,12 +444,10 @@ class StandardProcedure(Procedure):
 
             if self.test_mode == True and self.jump_to_end == True:
                 self.create_final_csv_and_audiogram(self.temp_filename, binaural)
-                self.progress = 1
                 return True
             
             if success_lr:
                 self.create_final_csv_and_audiogram(self.temp_filename, binaural)
-                self.progress = 1
                 return True
 
         return False
@@ -546,6 +542,7 @@ class StandardProcedure(Procedure):
                         return False
                     else:
                         self.add_to_temp_csv(str(self.level), str(self.frequency), self.side, self.temp_filename)
+                        self.progress = 1
                         return True
 
                 # TODO Wenn Streuung mehr als 10 dB: Vermerk im Audiogramm
@@ -582,7 +579,7 @@ class ScreeningProcedure(Procedure):
 
         self.progress_step = 1 / 14
 
-    def screen_test(self, binaural=False):
+    def screen_test(self, binaural=False, **additional_data):
         """main functions
 
         Returns:

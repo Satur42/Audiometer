@@ -237,10 +237,12 @@ class MainMenu(ttk.Frame):
         self.gender_dropdown.set("Geschlecht...")
         self.gender_dropdown.pack(padx=10, pady=10)
 
-        self.age_label = ttk.Label(self, text="Alter (Optional):", font=(FONT_FAMILY, TEXT_SIZE))
-        self.age_label.pack(padx=10, pady=10)
-        self.age_entry = ttk.Entry(self, width=self.button_width+1)
-        self.age_entry.pack(padx=10, pady=10)
+        ''' # doesn't work yet
+        self.birthday_label = ttk.Label(self, text="Geburstag (Optional):", font=(FONT_FAMILY, TEXT_SIZE))
+        self.birthday_label.pack(padx=10, pady=10)
+        self.birthday_entry = DateEntry(self, date_pattern='dd.mm.yyyy', width=24, background='darkblue',
+                                        foreground='white', borderwidth=2, maxdate=datetime.today())
+        '''
 
         self.label = ttk.Label(self, text="\nBitte wählen Sie ein Programm", font=(FONT_FAMILY, TEXT_SIZE))
         self.label.pack(pady=10)
@@ -331,17 +333,6 @@ class MainMenu(ttk.Frame):
                 messagebox.showwarning("Warnung", "Bitte geben Sie eine Probandennummer ein.")
                 return
             
-            # check if valide age is entered
-            if self.age_entry.get():
-                try:
-                    i = int(self.age_entry.get())
-                    if i > 110 or i < 0:
-                        messagebox.showwarning("Warnung", 'Bitte geben Sie bei Alter eine gültige Zahl oder gar nichts ein.')
-                        return
-                except:
-                    messagebox.showwarning("Warnung", 'Bitte geben Sie bei Alter eine gültige Zahl oder gar nichts ein.')
-                    return
-
             patient_folder = os.path.join(self.parent.save_path, self.patient_number)
             pics = self.parent.get_images_in_path(patient_folder)
             if pics:
@@ -394,17 +385,7 @@ class FamiliarizationPage(ttk.Frame):
         """
         self.use_calibration = self.parent.frames[MainMenu].use_calibration.get()
         self.parent.show_frame(DuringFamiliarizationView)
-        
-        gender = self.parent.frames[MainMenu].gender_dropdown.get()
-        if gender == "Geschlecht..." or gender == "Keine Angabe":
-            gender = ""
-
-        age = self.parent.frames[MainMenu].age_entry.get()
-
-        self.parent.wait_for_process(lambda: self.parent.frames[DuringFamiliarizationView].program(id=self.parent.frames[MainMenu].patient_number, 
-                                                                                                   calibrate=self.use_calibration, 
-                                                                                                   gender=gender,
-                                                                                                   age=age), 
+        self.parent.wait_for_process(lambda: self.parent.frames[DuringFamiliarizationView].program(id=self.parent.frames[MainMenu].patient_number, calibrate=self.use_calibration), 
                                      lambda: self.parent.show_frame(ProgramPage))
         time.sleep(0.001)
         self.update()
